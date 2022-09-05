@@ -10,6 +10,7 @@ app = Flask(__name__)
 Bootstrap(app)
 app.config.from_object(Config)
 
+
 # TODO: Handle login management better, maybe with flask_login?
 #login = LoginManager(app)
 
@@ -55,3 +56,4 @@ if not os.path.exists(app.config['UPLOAD_PATH']):
     os.mkdir(app.config['UPLOAD_PATH'])
 
 from app import routes
+
