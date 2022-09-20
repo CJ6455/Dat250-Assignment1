@@ -1,4 +1,5 @@
 from typing_extensions import Self
+from wsgiref.validate import validator
 from flask import render_template, flash, redirect, url_for, request
 from app import app, query_db
 from app.forms import IndexForm, PostForm, FriendsForm, ProfileForm, CommentsForm
@@ -24,13 +25,10 @@ def index():
             flash('Sorry, wrong password!')
 
     elif form.register.validate_on_submit():
-        #validation =form.register.validate(form.register)
-        #if validation:
-        query_db('INSERT INTO Users (username, first_name, last_name, password) VALUES("{}", "{}", "{}", "{}");'.format(form.register.username.data, form.register.first_name.data, form.register.last_name.data, form.register.password.data))
-        return render_template('index.html', title='riktig', form=form)
-       # elif not validation:
-        #    return render_template('index.html', title='feil', form=form)
-        
+        if query_db('INSERT INTO Users (username, first_name, last_name, password) VALUES("{}", "{}", "{}", "{}");'.format(form.register.username.data, form.register.first_name.data, form.register.last_name.data, form.register.password.data))==0:
+           #printer feilmelding hvis bruker eksisterer fra før
+            return render_template('index.html', title='Welcome', form=form,eksisterendebruker='Denne brukeren eksisterer fra før')
+        return render_template('index.html', title='Welcome', form=form)
     return render_template('index.html', title='Welcome', form=form)
 
 
@@ -39,6 +37,7 @@ def index():
 def stream(username):
     form = PostForm()
     user = query_db('SELECT * FROM Users WHERE username="{}";'.format(username), one=True)
+    
     if form.is_submitted():
         if form.image.data:
             path = os.path.join(app.config['UPLOAD_PATH'], form.image.data.filename)
@@ -68,6 +67,7 @@ def comments(username, p_id):
 def friends(username):
     form = FriendsForm()
     user = query_db('SELECT * FROM Users WHERE username="{}";'.format(username), one=True)
+
     if form.is_submitted():
         friend = query_db('SELECT * FROM Users WHERE username="{}";'.format(form.username.data), one=True)
         if friend is None:

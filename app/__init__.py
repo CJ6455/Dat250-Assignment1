@@ -4,6 +4,8 @@ from flask_bootstrap import Bootstrap
 #from flask_login import LoginManager
 import sqlite3
 import os
+import re
+from tkinter import messagebox
 
 # create and configure app#
 app = Flask(__name__)
@@ -33,7 +35,12 @@ def init_db():
 # perform generic query, not very secure yet
 def query_db(query, one=False):
     db = get_db()
-    cursor = db.execute(query)
+    try: cursor = db.execute(query) 
+    except sqlite3.IntegrityError as e:
+        if re.match(r'UNIQUE constraint failed', e.args[0]):#sjekker om Unique constraint feiler
+            return 0
+        else:
+            raise e
     rv = cursor.fetchall()
     cursor.close()
     db.commit()
