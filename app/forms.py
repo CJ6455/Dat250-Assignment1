@@ -3,14 +3,16 @@ from xml.dom import ValidationErr
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, FormField, TextAreaField, FileField, validators
 from wtforms.fields.html5 import DateField
+from flask_wtf.file import FileAllowed
+
+from config import Config
 import re
 
 # defines all forms in the application, these will be instantiated by the template,
 # and the routes.py will read the values of the fields
 # TODO: Add validation, maybe use wtforms.validators??
 # TODO: There was some important security feature that wtforms provides, but I don't remember what; implement it
-
-      
+  
 class LoginForm(FlaskForm):
     username = StringField('Username', render_kw={'placeholder': 'Username'})
     password = PasswordField('Password', render_kw={'placeholder': 'Password'})
@@ -32,7 +34,7 @@ class IndexForm(FlaskForm):
 
 class PostForm(FlaskForm):
     content = TextAreaField('New Post', render_kw={'placeholder': 'What are you thinking about?'})
-    image = FileField('Image')
+    image = FileField('Image',validators=[FileAllowed(Config.ALLOWED_EXTENSIONS,'Image only!')]) #sjekke om filtypen er tillatt
     submit = SubmitField('Post')
 
 class CommentsForm(FlaskForm):
