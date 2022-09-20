@@ -1,12 +1,16 @@
+from wsgiref import validate
+from xml.dom import ValidationErr
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, FormField, TextAreaField, FileField, validators
 from wtforms.fields.html5 import DateField
+import re
 
 # defines all forms in the application, these will be instantiated by the template,
 # and the routes.py will read the values of the fields
 # TODO: Add validation, maybe use wtforms.validators??
 # TODO: There was some important security feature that wtforms provides, but I don't remember what; implement it
 
+      
 class LoginForm(FlaskForm):
     username = StringField('Username', render_kw={'placeholder': 'Username'})
     password = PasswordField('Password', render_kw={'placeholder': 'Password'})
@@ -17,9 +21,10 @@ class RegisterForm(FlaskForm):
     first_name = StringField('First Name',[validators.DataRequired()], render_kw={'placeholder': 'First Name'})
     last_name = StringField('Last Name',[validators.DataRequired()], render_kw={'placeholder': 'Last Name'})
     username = StringField('Username',[validators.DataRequired()], render_kw={'placeholder': 'Username'})
-    password = PasswordField('Password',[validators.DataRequired()], render_kw={'placeholder': 'Password'})
-    confirm_password = PasswordField('Confirm Password',[validators.EqualTo('password', message='Passwords must match')], render_kw={'placeholder': 'Confirm Password'})
+    password = PasswordField('Password',[validators.DataRequired(),validators.Regexp("^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!#%*?&]{6,20}$",message='password must contain, Uppercase, Lowercase, Numbers, and Special Characters')], render_kw={'placeholder': 'Password'})
+    confirm_password = PasswordField('Confirm Password',validators=[validators.DataRequired(), validators.EqualTo('password', message='Passwords must match')], render_kw={'placeholder': 'Confirm Password'})
     submit = SubmitField('Sign Up')
+    
 
 class IndexForm(FlaskForm):
     login = FormField(LoginForm)

@@ -1,3 +1,4 @@
+from typing_extensions import Self
 from flask import render_template, flash, redirect, url_for, request
 from app import app, query_db
 from app.forms import IndexForm, PostForm, FriendsForm, ProfileForm, CommentsForm
@@ -10,8 +11,10 @@ import os
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/index', methods=['GET', 'POST'])
 def index():
+
     form = IndexForm()
-    if form.login.is_submitted() and form.login.submit.data:
+
+    if form.login.validate_on_submit():
         user = query_db('SELECT * FROM Users WHERE username="{}";'.format(form.login.username.data), one=True)
         if user == None:
             flash('Sorry, this user does not exist!')
@@ -21,9 +24,13 @@ def index():
             flash('Sorry, wrong password!')
 
     elif form.register.validate_on_submit():
-        query_db('INSERT INTO Users (username, first_name, last_name, password) VALUES("{}", "{}", "{}", "{}");'.format(form.register.username.data, form.register.first_name.data,
-        form.register.last_name.data, form.register.password.data))
-        return redirect(url_for('index'))
+        #validation =form.register.validate(form.register)
+        #if validation:
+        query_db('INSERT INTO Users (username, first_name, last_name, password) VALUES("{}", "{}", "{}", "{}");'.format(form.register.username.data, form.register.first_name.data, form.register.last_name.data, form.register.password.data))
+        return render_template('index.html', title='riktig', form=form)
+       # elif not validation:
+        #    return render_template('index.html', title='feil', form=form)
+        
     return render_template('index.html', title='Welcome', form=form)
 
 
