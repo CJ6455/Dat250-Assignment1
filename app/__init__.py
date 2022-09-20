@@ -5,7 +5,7 @@ from flask_bootstrap import Bootstrap
 import sqlite3
 import os
 
-# create and configure app
+# create and configure app#
 app = Flask(__name__)
 Bootstrap(app)
 app.config.from_object(Config)
