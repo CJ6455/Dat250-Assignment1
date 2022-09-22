@@ -7,7 +7,10 @@
             <div class="card">
                 <div class="card-body">
                     <h1 class="card-text">About {{username}}</h1>
+                    {%if username==current_user.username%}
                     <button type="button" class="btn btn-link" id="edit-button"><span class="fa fa-edit"></span>&nbsp;Edit</button>
+                    {%endif%}
+                    
                     <!--View details-->
                     <div id="view-details">
                         <ul class="list-group list-group-flush">
@@ -58,12 +61,15 @@
                     <!--Edit details-->
                     <div id="edit-details" style="display: none;">
                         <form action="" method="POST" novalidate>
-                            {{ wtf.form_field(form.education) }}
-                            {{ wtf.form_field(form.employment) }}
-                            {{ wtf.form_field(form.music) }}
-                            {{ wtf.form_field(form.movie) }}
-                            {{ wtf.form_field(form.nationality) }}
-                            {{ wtf.form_field(form.birthday) }}
+
+                            {{form.csrf_token}}
+                            
+                            {{ wtf.form_field(form.education,value=user.education) }}
+                            {{ wtf.form_field(form.employment,value=user.employment) }}
+                            {{ wtf.form_field(form.music,value=user.music) }}
+                            {{ wtf.form_field(form.movie,value=user.movie) }}
+                            {{ wtf.form_field(form.nationality,value=user.nationality) }}
+                            {{ wtf.form_field(form.birthday,value=user.birthday) }}
                             {{ wtf.form_field(form.submit, class="btn btn-primary") }}
                         </form>
                     </div>

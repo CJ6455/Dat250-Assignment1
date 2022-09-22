@@ -18,12 +18,12 @@ CREATE TABLE [Users] (
   first_name VARCHAR,
   last_name VARCHAR,
   [password] VARCHAR,
-  education VARCHAR DEFAULT 'Unknown',
-  employment VARCHAR DEFAULT 'Unknown',
-  music VARCHAR DEFAULT 'Unknown',
-  movie VARCHAR DEFAULT 'Unknown',
-  nationality VARCHAR DEFAULT 'Unknown',
-  birthday DATE DEFAULT 'Unknown'
+  education VARCHAR DEFAULT ,
+  employment VARCHAR DEFAULT ,
+  music VARCHAR DEFAULT ,
+  movie VARCHAR DEFAULT ,
+  nationality VARCHAR DEFAULT ,
+  birthday DATE DEFAULT 
 );
 
 -- ---

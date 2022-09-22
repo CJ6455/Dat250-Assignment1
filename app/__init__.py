@@ -1,20 +1,28 @@
 from flask import Flask, g
 from config import Config
 from flask_bootstrap import Bootstrap
-#from flask_login import LoginManager
+from flask_login import LoginManager
+#from flask_recaptcha import ReCaptcha
+from flask_wtf.csrf import CSRFProtect
 import sqlite3
 import os
 import re
 
 
-# create and configure app#
+csrf = CSRFProtect() #added csrf protection
+login = LoginManager()
+#create and configure app#
 app = Flask(__name__)
 Bootstrap(app)
 app.config.from_object(Config)
+#recaptcha = ReCaptcha(app)
+csrf.init_app(app)
+login.init_app(app)
+login.login_view = 'index'
+
 
 
 # TODO: Handle login management better, maybe with flask_login?
-#login = LoginManager(app)
 
 # get an instance of the db
 def get_db():
@@ -40,6 +48,7 @@ def query_db(query, one=False):
         if re.match(r'UNIQUE constraint failed', e.args[0]):#sjekker om Unique constraint feiler
             return 0
         else:
+            Flask.flash(e)
             raise e
     rv = cursor.fetchall()
     cursor.close()
@@ -47,6 +56,16 @@ def query_db(query, one=False):
     return (rv[0] if rv else None) if one else rv
 
 # TODO: Add more specific queries to simplify code
+def test_query(query):
+    db = get_db()
+    cur=db.execute(query)
+    result=cur.fetchone()
+    cur.close()
+    db.commit()
+    if result:
+        return True
+    else:
+        return False
 
 # automatically called when application is closed, and closes db connection
 @app.teardown_appcontext
