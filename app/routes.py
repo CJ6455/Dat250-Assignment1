@@ -57,6 +57,11 @@ def index():
         else:
             flash('User created successfully!')
             return redirect(url_for('index'))
+    elif form.register.submit.data:
+        flash('User not created!')
+    elif form.login.submit.data:
+        flash('Login failed!')
+        
     return render_template('index.html', title='Welcome', form=form)
 @app.route("/logout")
 @login_required
@@ -104,18 +109,19 @@ def friends():
     form = FriendsForm()
     all_friends = query_db('SELECT * FROM Friends AS f JOIN Users as u ON f.f_id=u.id WHERE f.u_id={} AND f.f_id!={} ;'.format(current_user.id, current_user.id))
     if form.validate_on_submit():
+        
         friend = query_db('SELECT * FROM Users WHERE username="{}";'.format(form.username.data), one=True)
         if friend is None:
             flash('User does not exist')
         elif friend['id']==current_user.id:
             flash('Why you wanna add yourself??')
+        elif any(friend['id'] in x for x in all_friends):
+            flash('Already friends!')
         else:
-            for i in all_friends:
-                if i['id']==friend['id']:
-                    flash('Already friends!')
-                else:
-                    query_db('INSERT INTO Friends (u_id, f_id) VALUES({}, {});'.format(current_user.id, friend['id']))  
-                    flash('Friend added!')
+            query_db('INSERT INTO Friends (u_id, f_id) VALUES({}, {});'.format(current_user.id, friend['id']))  
+            flash('Friend added!') 
+            return redirect(url_for('friends'))
+
     
     return render_template('friends.html', title='Friends', friends=all_friends, form=form)
 

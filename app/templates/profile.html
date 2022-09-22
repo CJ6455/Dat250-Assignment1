@@ -58,6 +58,8 @@
                             </li>
                         </ul>
                     </div>
+                    
+                    {%if username==current_user.username%}
                     <!--Edit details-->
                     <div id="edit-details" style="display: none;">
                         <form action="" method="POST" novalidate>
@@ -73,6 +75,7 @@
                             {{ wtf.form_field(form.submit, class="btn btn-primary") }}
                         </form>
                     </div>
+                    {%endif%}
                 </div>
             </div>
         </div>
